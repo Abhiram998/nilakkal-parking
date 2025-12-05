@@ -60,34 +60,34 @@ export default function Admin() {
   const currentZones = zones.slice(pageIndex * ITEMS_PER_PAGE, (pageIndex + 1) * ITEMS_PER_PAGE);
 
   return (
-    <div className="min-h-screen bg-black text-white font-mono p-6 flex flex-col">
+    <div className="min-h-screen bg-black text-white font-mono p-4 flex flex-col text-sm">
       {/* Header */}
-      <div className="mb-8 border-b border-white/20 pb-4 flex justify-between items-end">
+      <div className="mb-4 border-b border-white/20 pb-2 flex justify-between items-end">
         <div>
-          <h1 className="text-3xl font-bold uppercase tracking-wider mb-2">Nilakkal Parking – Live Admin Dashboard</h1>
-          <div className="text-sm text-white/60">CONTROL ROOM • {currentTime.toLocaleDateString()} • {currentTime.toLocaleTimeString()}</div>
+          <h1 className="text-xl font-bold uppercase tracking-wider mb-1">Nilakkal Parking – Live Admin Dashboard</h1>
+          <div className="text-xs text-white/60">CONTROL ROOM • {currentTime.toLocaleDateString()} • {currentTime.toLocaleTimeString()}</div>
         </div>
-        <div className="border border-white p-4 min-w-[200px] text-right">
-          <div className="text-xs uppercase tracking-widest mb-1 text-white/70">Total Capacity</div>
-          <div className="text-3xl font-bold">{totalCapacity}</div>
+        <div className="border border-white p-2 min-w-[150px] text-right">
+          <div className="text-[10px] uppercase tracking-widest mb-1 text-white/70">Total Capacity</div>
+          <div className="text-2xl font-bold">{totalCapacity}</div>
         </div>
       </div>
 
       {/* Top Info Bar */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
-        <div className="border border-white p-6 flex justify-between items-center">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+        <div className="border border-white p-3 flex justify-between items-center">
           <div>
-            <div className="text-xs uppercase tracking-widest mb-2 text-white/70">Total Vehicles Inside</div>
-            <div className="text-5xl font-bold">{totalOccupied}</div>
+            <div className="text-[10px] uppercase tracking-widest mb-1 text-white/70">Total Vehicles Inside</div>
+            <div className="text-3xl font-bold">{totalOccupied}</div>
           </div>
           <div className="text-right">
-             <div className="text-xs uppercase tracking-widest mb-2 text-white/70">Occupancy Rate</div>
-             <div className="text-3xl font-bold">{Math.round((totalOccupied / totalCapacity) * 100)}%</div>
+             <div className="text-[10px] uppercase tracking-widest mb-1 text-white/70">Occupancy Rate</div>
+             <div className="text-xl font-bold">{Math.round((totalOccupied / totalCapacity) * 100)}%</div>
           </div>
         </div>
-        <div className="border border-white p-6">
-          <div className="text-xs uppercase tracking-widest mb-2 text-white/70">Total Vacancy (Available Spots)</div>
-          <div className="text-5xl font-bold text-green-500">{totalCapacity - totalOccupied}</div>
+        <div className="border border-white p-3">
+          <div className="text-[10px] uppercase tracking-widest mb-1 text-white/70">Total Vacancy (Available Spots)</div>
+          <div className="text-3xl font-bold text-green-500">{totalCapacity - totalOccupied}</div>
         </div>
       </div>
 
@@ -96,12 +96,12 @@ export default function Admin() {
         <table className="w-full text-left border-collapse flex-grow">
           <thead>
             <tr className="border-b border-white bg-white/5">
-              <th className="p-6 uppercase tracking-wider border-r border-white font-bold text-lg">Zone Name</th>
-              <th className="p-6 uppercase tracking-wider border-r border-white font-bold text-right text-lg">Current Vehicles</th>
-              <th className="p-6 uppercase tracking-wider border-r border-white font-bold text-right text-lg">Capacity</th>
-              <th className="p-6 uppercase tracking-wider border-r border-white font-bold text-right text-lg">Vacant Slots</th>
-              <th className="p-6 uppercase tracking-wider border-r border-white font-bold text-center text-lg">Status</th>
-              <th className="p-6 uppercase tracking-wider font-bold text-center text-lg">Actions</th>
+              <th className="p-3 uppercase tracking-wider border-r border-white font-bold text-xs">Zone Name</th>
+              <th className="p-3 uppercase tracking-wider border-r border-white font-bold text-right text-xs">Current Vehicles</th>
+              <th className="p-3 uppercase tracking-wider border-r border-white font-bold text-right text-xs">Capacity</th>
+              <th className="p-3 uppercase tracking-wider border-r border-white font-bold text-right text-xs">Vacant Slots</th>
+              <th className="p-3 uppercase tracking-wider border-r border-white font-bold text-center text-xs">Status</th>
+              <th className="p-3 uppercase tracking-wider font-bold text-center text-xs">Actions</th>
             </tr>
           </thead>
           <tbody>
@@ -110,13 +110,13 @@ export default function Admin() {
               const isFull = vacant === 0;
               
               return (
-                <tr key={zone.id} className="border-b border-white/20 hover:bg-white/5 transition-colors h-24">
-                  <td className="p-6 border-r border-white/20 font-bold text-2xl">{zone.name} ({zone.id})</td>
-                  <td className="p-6 border-r border-white/20 text-right font-mono text-2xl">{zone.occupied}</td>
-                  <td className="p-6 border-r border-white/20 text-right font-mono text-2xl text-white/50">{zone.capacity}</td>
-                  <td className="p-6 border-r border-white/20 text-right font-mono text-2xl text-green-500 font-bold">{vacant}</td>
-                  <td className="p-6 border-r border-white/20 text-center">
-                    <span className={`px-4 py-2 text-lg font-bold border-2 ${
+                <tr key={zone.id} className="border-b border-white/20 hover:bg-white/5 transition-colors h-14">
+                  <td className="p-3 border-r border-white/20 font-bold text-lg">{zone.name} ({zone.id})</td>
+                  <td className="p-3 border-r border-white/20 text-right font-mono text-lg">{zone.occupied}</td>
+                  <td className="p-3 border-r border-white/20 text-right font-mono text-lg text-white/50">{zone.capacity}</td>
+                  <td className="p-3 border-r border-white/20 text-right font-mono text-lg text-green-500 font-bold">{vacant}</td>
+                  <td className="p-3 border-r border-white/20 text-center">
+                    <span className={`px-3 py-1 text-xs font-bold border ${
                       isFull 
                         ? "border-red-500 text-red-500 bg-red-500/10" 
                         : "border-green-500 text-green-500 bg-green-500/10"
@@ -124,14 +124,14 @@ export default function Admin() {
                       {isFull ? "FULL" : "FREE"}
                     </span>
                   </td>
-                  <td className="p-6 text-center">
+                  <td className="p-3 text-center">
                     <Button 
                       variant="ghost" 
-                      size="lg" 
+                      size="sm" 
                       onClick={() => setSelectedZone(zone)}
-                      className="h-12 w-12 p-0 text-white hover:text-black hover:bg-white rounded-none border border-white"
+                      className="h-8 w-8 p-0 text-white hover:text-black hover:bg-white rounded-none border border-white"
                     >
-                      <Eye className="w-6 h-6" />
+                      <Eye className="w-4 h-4" />
                     </Button>
                   </td>
                 </tr>
@@ -139,46 +139,49 @@ export default function Admin() {
             })}
             {/* Fill empty rows to maintain height if last page has fewer items */}
             {Array.from({ length: ITEMS_PER_PAGE - currentZones.length }).map((_, i) => (
-               <tr key={`empty-${i}`} className="border-b border-white/10 h-24">
-                 <td colSpan={6} className="p-6 text-center text-white/10 uppercase tracking-widest">--- Empty Slot ---</td>
+               <tr key={`empty-${i}`} className="border-b border-white/10 h-14">
+                 <td colSpan={6} className="p-3 text-center text-white/10 uppercase tracking-widest text-xs">--- Empty Slot ---</td>
                </tr>
             ))}
           </tbody>
         </table>
 
         {/* Slideshow Controls */}
-        <div className="border-t border-white p-4 flex justify-between items-center bg-black">
+        <div className="border-t border-white p-2 flex justify-between items-center bg-black">
           <div className="flex gap-4">
             <Button 
               variant="outline" 
+              size="sm"
               onClick={handlePrev}
-              className="rounded-none border-white text-white hover:bg-white hover:text-black"
+              className="rounded-none border-white text-white hover:bg-white hover:text-black h-8 text-xs"
             >
-              <ChevronLeft className="mr-2 h-4 w-4" /> PREV
+              <ChevronLeft className="mr-1 h-3 w-3" /> PREV
             </Button>
             <Button 
               variant="outline" 
+              size="sm"
               onClick={togglePause}
-              className="rounded-none border-white text-white hover:bg-white hover:text-black w-32"
+              className="rounded-none border-white text-white hover:bg-white hover:text-black w-24 h-8 text-xs"
             >
-              {isPaused ? <Play className="mr-2 h-4 w-4" /> : <Pause className="mr-2 h-4 w-4" />}
+              {isPaused ? <Play className="mr-1 h-3 w-3" /> : <Pause className="mr-1 h-3 w-3" />}
               {isPaused ? "RESUME" : "PAUSE"}
             </Button>
             <Button 
               variant="outline" 
+              size="sm"
               onClick={handleNext}
-              className="rounded-none border-white text-white hover:bg-white hover:text-black"
+              className="rounded-none border-white text-white hover:bg-white hover:text-black h-8 text-xs"
             >
-              NEXT <ChevronRight className="ml-2 h-4 w-4" />
+              NEXT <ChevronRight className="ml-1 h-3 w-3" />
             </Button>
           </div>
           <div className="flex items-center gap-6">
-             <span className="text-sm font-bold uppercase tracking-wider bg-white text-black px-3 py-1">
+             <span className="text-xs font-bold uppercase tracking-wider bg-white text-black px-2 py-0.5">
                 Page {pageIndex + 1} / {totalPages}
              </span>
-             {isPaused && <span className="text-xs bg-red-500 text-white px-2 py-1 font-bold uppercase animate-pulse">PAUSED</span>}
-             <div className="text-xs uppercase tracking-widest text-white/50 border-l border-white/20 pl-6">
-               Auto-rotating every 5 seconds
+             {isPaused && <span className="text-[10px] bg-red-500 text-white px-2 py-0.5 font-bold uppercase animate-pulse">PAUSED</span>}
+             <div className="text-[10px] uppercase tracking-widest text-white/50 border-l border-white/20 pl-4">
+               Auto-rotating every 5s
              </div>
           </div>
         </div>
