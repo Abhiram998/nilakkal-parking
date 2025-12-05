@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useParking } from "@/lib/parking-context";
+import { useParking, ParkingZone } from "@/lib/parking-context";
 import { ZoneCard } from "@/components/parking/ZoneCard";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -7,13 +7,20 @@ import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useToast } from "@/hooks/use-toast";
-import { Shield, Camera, Printer, BarChart3, LayoutDashboard } from "lucide-react";
+import { Shield, Camera, Printer, BarChart3, LayoutDashboard, Car, Truck, Bus, Eye } from "lucide-react";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 
 export default function Admin() {
   const { zones, enterVehicle, totalCapacity, totalOccupied } = useParking();
   const [vehicleNumber, setVehicleNumber] = useState("");
   const { toast } = useToast();
   const [lastTicket, setLastTicket] = useState<any>(null);
+  const [selectedZone, setSelectedZone] = useState<ParkingZone | null>(null);
 
   const handleEntry = (e: React.FormEvent) => {
     e.preventDefault();
@@ -34,6 +41,14 @@ export default function Admin() {
         title: "Entry Failed",
         description: result.message,
       });
+    }
+  };
+
+  const getVehicleIcon = (type: string) => {
+    switch(type) {
+      case 'heavy': return <Bus className="w-4 h-4" />;
+      case 'medium': return <Truck className="w-4 h-4" />;
+      default: return <Car className="w-4 h-4" />;
     }
   };
 
@@ -129,8 +144,8 @@ export default function Admin() {
 
         {/* Right Column: Zone Dashboard */}
         <div className="lg:col-span-2">
-          <Tabs defaultValue="grid">
-            <div className="flex justify-between items-center mb-4">
+          <Tabs defaultValue="grid" className="h-full flex flex-col">
+            <div className="flex justify-between items-center mb-4 shrink-0">
               <h3 className="text-xl font-serif font-bold">Zone Overview</h3>
               <TabsList>
                 <TabsTrigger value="grid"><LayoutDashboard className="w-4 h-4 mr-2"/> Grid</TabsTrigger>
@@ -138,31 +153,32 @@ export default function Admin() {
               </TabsList>
             </div>
             
-            <TabsContent value="grid" className="mt-0">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 h-[600px] overflow-y-auto pr-2 scrollbar-thin">
+            <TabsContent value="grid" className="mt-0 flex-1 h-[600px]">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 h-full overflow-y-auto pr-2 scrollbar-thin pb-4">
                 {zones.map((zone) => (
                   <ZoneCard key={zone.id} zone={zone} detailed />
                 ))}
               </div>
             </TabsContent>
             
-            <TabsContent value="list">
-              <Card>
-                <CardContent className="p-0">
-                  <div className="rounded-md border">
-                    <table className="w-full text-sm text-left">
-                      <thead className="bg-muted text-muted-foreground">
+            <TabsContent value="list" className="mt-0 flex-1 h-[600px]">
+              <Card className="h-full flex flex-col">
+                <CardContent className="p-0 flex-1 overflow-hidden">
+                  <div className="h-full overflow-y-auto">
+                    <table className="w-full text-sm text-left relative">
+                      <thead className="bg-muted text-muted-foreground sticky top-0 z-10 shadow-sm">
                         <tr>
                           <th className="p-4 font-medium">Zone ID</th>
                           <th className="p-4 font-medium">Name</th>
                           <th className="p-4 font-medium text-right">Capacity</th>
                           <th className="p-4 font-medium text-right">Occupied</th>
                           <th className="p-4 font-medium text-right">Status</th>
+                          <th className="p-4 font-medium text-center">Actions</th>
                         </tr>
                       </thead>
-                      <tbody>
+                      <tbody className="divide-y">
                         {zones.map((zone) => (
-                          <tr key={zone.id} className="border-t hover:bg-muted/50 transition-colors">
+                          <tr key={zone.id} className="hover:bg-muted/50 transition-colors">
                             <td className="p-4 font-mono font-medium">{zone.id}</td>
                             <td className="p-4">{zone.name}</td>
                             <td className="p-4 text-right text-muted-foreground">{zone.capacity}</td>
@@ -178,6 +194,16 @@ export default function Admin() {
                                 {Math.round((zone.occupied / zone.capacity) * 100)}%
                               </span>
                             </td>
+                            <td className="p-4 text-center">
+                              <Button 
+                                variant="ghost" 
+                                size="sm" 
+                                onClick={() => setSelectedZone(zone)}
+                                className="h-8 w-8 p-0"
+                              >
+                                <Eye className="w-4 h-4 text-muted-foreground hover:text-primary" />
+                              </Button>
+                            </td>
                           </tr>
                         ))}
                       </tbody>
@@ -189,6 +215,40 @@ export default function Admin() {
           </Tabs>
         </div>
       </div>
+
+      <Dialog open={!!selectedZone} onOpenChange={(open) => !open && setSelectedZone(null)}>
+        <DialogContent className="max-w-md max-h-[80vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle>Zone {selectedZone?.id} - Vehicles</DialogTitle>
+          </DialogHeader>
+          <div className="space-y-4 mt-4">
+             {selectedZone?.vehicles.length === 0 ? (
+                <div className="text-center py-4 text-muted-foreground">No vehicles parked</div>
+             ) : (
+               <div className="space-y-2">
+                 {selectedZone?.vehicles.map((v, i) => (
+                   <div key={i} className="flex justify-between items-center p-3 rounded-lg border bg-card">
+                     <div className="flex items-center gap-3">
+                       <div className={`w-8 h-8 rounded-full flex items-center justify-center text-white ${
+                          v.type === 'heavy' ? 'bg-red-500' : v.type === 'medium' ? 'bg-amber-500' : 'bg-primary'
+                        }`}>
+                          {getVehicleIcon(v.type)}
+                        </div>
+                        <div>
+                          <div className="font-mono font-bold text-sm">{v.number}</div>
+                          <div className="text-xs text-muted-foreground">{v.ticketId}</div>
+                        </div>
+                     </div>
+                     <div className="text-xs font-mono text-muted-foreground">
+                        {v.entryTime.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}
+                     </div>
+                   </div>
+                 ))}
+               </div>
+             )}
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
