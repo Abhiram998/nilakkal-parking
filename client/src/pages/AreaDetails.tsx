@@ -150,54 +150,54 @@ export default function AreaDetails() {
         </Card>
       </div>
 
-      {/* Vehicle List */}
-      <Card>
-        <CardHeader>
-          <CardTitle className="text-lg flex items-center gap-2">
-            <Car className="w-5 h-5" />
-            Parked Vehicles List
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
-          {zone.vehicles.length === 0 ? (
-            <div className="text-center py-8 text-muted-foreground">
-              No vehicles currently parked in this zone.
-            </div>
-          ) : (
-            <div className="divide-y">
-              {zone.vehicles.map((v, i) => (
-                <div key={i} className="py-3 flex justify-between items-center">
-                  <div className="flex items-center gap-3">
-                    <div className={`w-8 h-8 rounded-full flex items-center justify-center text-white ${
-                      v.type === 'heavy' ? 'bg-red-500' : v.type === 'medium' ? 'bg-amber-500' : 'bg-primary'
-                    }`}>
-                      {getVehicleIcon(v.type)}
+      {/* Vehicle List - Only visible to Admin */}
+      {isAdmin && (
+        <Card>
+          <CardHeader>
+            <CardTitle className="text-lg flex items-center gap-2">
+              <Car className="w-5 h-5" />
+              Parked Vehicles List
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            {zone.vehicles.length === 0 ? (
+              <div className="text-center py-8 text-muted-foreground">
+                No vehicles currently parked in this zone.
+              </div>
+            ) : (
+              <div className="divide-y">
+                {zone.vehicles.map((v, i) => (
+                  <div key={i} className="py-3 flex justify-between items-center">
+                    <div className="flex items-center gap-3">
+                      <div className={`w-8 h-8 rounded-full flex items-center justify-center text-white ${
+                        v.type === 'heavy' ? 'bg-red-500' : v.type === 'medium' ? 'bg-amber-500' : 'bg-primary'
+                      }`}>
+                        {getVehicleIcon(v.type)}
+                      </div>
+                      <div>
+                        <div className="font-mono font-medium">{v.number}</div>
+                        <div className="flex gap-2 items-center">
+                          <span className="text-xs text-muted-foreground">Ticket: {v.ticketId}</span>
+                          <span className={`text-[10px] uppercase px-1.5 py-0.5 rounded border ${
+                            v.type === 'heavy' ? 'border-red-200 bg-red-50 text-red-700' : 
+                            v.type === 'medium' ? 'border-amber-200 bg-amber-50 text-amber-700' : 
+                            'border-blue-200 bg-blue-50 text-blue-700'
+                          }`}>
+                            {v.type}
+                          </span>
+                        </div>
+                      </div>
                     </div>
-                    <div>
-                      <div className="font-mono font-medium">
-                        {isAdmin ? v.number : v.number.replace(/^([A-Z]{2}-\d+)-[A-Z0-9]+-(\d+)$/, "$1-**-****")}
-                      </div>
-                      <div className="flex gap-2 items-center">
-                        <span className="text-xs text-muted-foreground">Ticket: {v.ticketId}</span>
-                        <span className={`text-[10px] uppercase px-1.5 py-0.5 rounded border ${
-                          v.type === 'heavy' ? 'border-red-200 bg-red-50 text-red-700' : 
-                          v.type === 'medium' ? 'border-amber-200 bg-amber-50 text-amber-700' : 
-                          'border-blue-200 bg-blue-50 text-blue-700'
-                        }`}>
-                          {v.type}
-                        </span>
-                      </div>
+                    <div className="text-sm text-muted-foreground font-mono">
+                      {v.entryTime.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}
                     </div>
                   </div>
-                  <div className="text-sm text-muted-foreground font-mono">
-                    {v.entryTime.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}
-                  </div>
-                </div>
-              ))}
-            </div>
-          )}
-        </CardContent>
-      </Card>
+                ))}
+              </div>
+            )}
+          </CardContent>
+        </Card>
+      )}
     </div>
   );
 }

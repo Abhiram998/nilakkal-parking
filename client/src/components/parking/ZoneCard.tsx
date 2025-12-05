@@ -3,12 +3,36 @@ import { motion } from "framer-motion";
 import { Progress } from "@/components/ui/progress";
 import { cn } from "@/lib/utils";
 import { Link } from "wouter";
+import { MoreHorizontal, Car, Bus, Truck } from "lucide-react";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import { useState } from "react";
+import { Button } from "@/components/ui/button";
 
 export function ZoneCard({ zone, detailed = false }: { zone: ParkingZone, detailed?: boolean }) {
   const { isAdmin } = useParking();
   const percentage = Math.round((zone.occupied / zone.capacity) * 100);
   const isFull = percentage >= 100;
   const isNearFull = percentage > 85;
+  const [showVehicles, setShowVehicles] = useState(false);
+
+  const getVehicleIcon = (type: string) => {
+    switch(type) {
+      case 'heavy': return <Bus className="w-4 h-4" />;
+      case 'medium': return <Truck className="w-4 h-4" />;
+      default: return <Car className="w-4 h-4" />;
+    }
+  };
 
   const CardContent = (
     <motion.div 
@@ -31,13 +55,31 @@ export function ZoneCard({ zone, detailed = false }: { zone: ParkingZone, detail
             </span>
           </p>
         </div>
-        <div className={cn(
-          "h-8 w-8 rounded-full flex items-center justify-center text-xs font-bold border",
-          isFull 
-            ? "bg-destructive text-destructive-foreground border-destructive/20" 
-            : "bg-primary/10 text-primary border-primary/10"
-        )}>
-          {zone.id}
+        <div className="flex gap-2">
+          <div className={cn(
+            "h-8 w-8 rounded-full flex items-center justify-center text-xs font-bold border",
+            isFull 
+              ? "bg-destructive text-destructive-foreground border-destructive/20" 
+              : "bg-primary/10 text-primary border-primary/10"
+          )}>
+            {zone.id}
+          </div>
+          
+          {/* Three Dot Menu - Only for Admins in Detailed View */}
+          {detailed && isAdmin && (
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="ghost" size="icon" className="h-8 w-8 -mr-2">
+                  <MoreHorizontal className="h-4 w-4" />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end">
+                <DropdownMenuItem onClick={() => setShowVehicles(true)}>
+                  <Car className="mr-2 h-4 w-4" /> View Vehicles
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          )}
         </div>
       </div>
 
@@ -54,21 +96,40 @@ export function ZoneCard({ zone, detailed = false }: { zone: ParkingZone, detail
         )} />
       </div>
 
-      {detailed && zone.vehicles.length > 0 && (
-        <div className="mt-6 pt-4 border-t border-border/50">
-          <h4 className="text-xs font-semibold text-muted-foreground mb-3">RECENT ENTRIES</h4>
-          <div className="space-y-2">
-            {zone.vehicles.slice(0, 3).map((v, i) => (
-              <div key={i} className="flex justify-between text-sm bg-background/50 p-2 rounded border border-border/50">
-                <span className="font-mono font-medium">
-                  {isAdmin ? v.number : v.number.replace(/^([A-Z]{2}-\d+)-[A-Z0-9]+-(\d+)$/, "$1-**-****")}
-                </span>
-                <span className="text-xs text-muted-foreground">{v.entryTime.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}</span>
-              </div>
-            ))}
+      {/* Vehicle List Dialog */}
+      <Dialog open={showVehicles} onOpenChange={setShowVehicles}>
+        <DialogContent className="max-w-md max-h-[80vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle>Zone {zone.id} - Vehicles</DialogTitle>
+          </DialogHeader>
+          <div className="space-y-4 mt-4">
+             {zone.vehicles.length === 0 ? (
+                <div className="text-center py-4 text-muted-foreground">No vehicles parked</div>
+             ) : (
+               <div className="space-y-2">
+                 {zone.vehicles.map((v, i) => (
+                   <div key={i} className="flex justify-between items-center p-3 rounded-lg border bg-card">
+                     <div className="flex items-center gap-3">
+                       <div className={`w-8 h-8 rounded-full flex items-center justify-center text-white ${
+                          v.type === 'heavy' ? 'bg-red-500' : v.type === 'medium' ? 'bg-amber-500' : 'bg-primary'
+                        }`}>
+                          {getVehicleIcon(v.type)}
+                        </div>
+                        <div>
+                          <div className="font-mono font-bold text-sm">{v.number}</div>
+                          <div className="text-xs text-muted-foreground">{v.ticketId}</div>
+                        </div>
+                     </div>
+                     <div className="text-xs font-mono text-muted-foreground">
+                        {v.entryTime.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}
+                     </div>
+                   </div>
+                 ))}
+               </div>
+             )}
           </div>
-        </div>
-      )}
+        </DialogContent>
+      </Dialog>
     </motion.div>
   );
 

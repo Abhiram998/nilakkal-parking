@@ -29,7 +29,7 @@ type ParkingContextType = {
   totalCapacity: number;
   totalOccupied: number;
   isAdmin: boolean;
-  loginAdmin: () => void;
+  loginAdmin: (username?: string, password?: string) => boolean;
   logoutAdmin: () => void;
 };
 
@@ -73,7 +73,14 @@ export function ParkingProvider({ children }: { children: React.ReactNode }) {
   const [zones, setZones] = useState<ParkingZone[]>(INITIAL_ZONES);
   const [isAdmin, setIsAdmin] = useState(false);
 
-  const loginAdmin = () => setIsAdmin(true);
+  const loginAdmin = (username?: string, password?: string) => {
+    if (username === "police@gmail.com" && password === "575") {
+      setIsAdmin(true);
+      return true;
+    }
+    return false;
+  };
+  
   const logoutAdmin = () => setIsAdmin(false);
 
   // Simulate live updates

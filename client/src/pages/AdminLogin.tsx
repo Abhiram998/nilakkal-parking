@@ -11,10 +11,19 @@ export default function AdminLogin() {
   const [, setLocation] = useLocation();
   const { loginAdmin } = useParking();
 
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
+
   const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();
-    loginAdmin();
-    setLocation("/admin");
+    setError("");
+    
+    if (loginAdmin(email, password)) {
+      setLocation("/admin");
+    } else {
+      setError("Invalid ID or Password. Access Denied.");
+    }
   };
 
   return (
@@ -30,13 +39,15 @@ export default function AdminLogin() {
         <CardContent>
           <form onSubmit={handleLogin} className="space-y-6">
             <div className="space-y-2">
-              <Label htmlFor="admin-id" className="text-slate-200">Officer ID / Badge Number</Label>
+              <Label htmlFor="admin-id" className="text-slate-200">Officer Email</Label>
               <div className="relative">
                 <ShieldAlert className="absolute left-3 top-3 h-4 w-4 text-slate-500" />
                 <Input 
                   id="admin-id" 
-                  placeholder="POL-ID-0000" 
+                  placeholder="police@gmail.com" 
                   className="pl-9 bg-slate-950 border-slate-800 text-slate-50 placeholder:text-slate-600 focus-visible:ring-blue-500" 
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
                   required 
                 />
               </div>
@@ -50,10 +61,19 @@ export default function AdminLogin() {
                   type="password" 
                   placeholder="••••••••" 
                   className="pl-9 bg-slate-950 border-slate-800 text-slate-50 placeholder:text-slate-600 focus-visible:ring-blue-500" 
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
                   required
                 />
               </div>
             </div>
+            
+            {error && (
+              <div className="text-red-500 text-sm text-center bg-red-500/10 p-2 rounded border border-red-500/20">
+                {error}
+              </div>
+            )}
+
             <Button type="submit" className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold">
               Authenticate
             </Button>
