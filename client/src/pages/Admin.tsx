@@ -92,13 +92,6 @@ export default function Admin() {
 
       {/* Main Table Container - Flex grow to fill space */}
       <div className="flex-grow flex flex-col border border-white relative">
-        <div className="absolute top-0 right-0 p-2 flex gap-2 z-10">
-          <span className="text-xs bg-white text-black px-2 py-1 font-bold uppercase">
-            Page {pageIndex + 1} / {totalPages}
-          </span>
-          {isPaused && <span className="text-xs bg-red-500 text-white px-2 py-1 font-bold uppercase animate-pulse">PAUSED</span>}
-        </div>
-
         <table className="w-full text-left border-collapse flex-grow">
           <thead>
             <tr className="border-b border-white bg-white/5">
@@ -178,8 +171,14 @@ export default function Admin() {
               NEXT <ChevronRight className="ml-2 h-4 w-4" />
             </Button>
           </div>
-          <div className="text-xs uppercase tracking-widest text-white/50">
-            Auto-rotating every 5 seconds
+          <div className="flex items-center gap-6">
+             <span className="text-sm font-bold uppercase tracking-wider bg-white text-black px-3 py-1">
+                Page {pageIndex + 1} / {totalPages}
+             </span>
+             {isPaused && <span className="text-xs bg-red-500 text-white px-2 py-1 font-bold uppercase animate-pulse">PAUSED</span>}
+             <div className="text-xs uppercase tracking-widest text-white/50 border-l border-white/20 pl-6">
+               Auto-rotating every 5 seconds
+             </div>
           </div>
         </div>
       </div>
