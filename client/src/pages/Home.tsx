@@ -94,63 +94,76 @@ export default function Home() {
       <div className="bg-card border border-border rounded-xl p-6 shadow-sm">
         <div className="flex items-center gap-2 mb-6">
           <BarChart3 className="w-5 h-5 text-primary" />
-          <h2 className="text-xl font-bold">Zone Capacity Overview</h2>
+          <h2 className="text-xl font-bold">Real-time Zone Vacancy by Vehicle Type</h2>
         </div>
-        <div className="h-[300px] w-full">
+        <div className="h-[350px] w-full">
           <ResponsiveContainer width="100%" height="100%">
-            <BarChart data={chartData} margin={{ top: 20, right: 30, left: 20, bottom: 5 }}>
-              <CartesianGrid strokeDasharray="3 3" className="stroke-muted/20" />
-              <XAxis dataKey="name" className="text-xs" tick={{ fill: 'currentColor' }} />
-              <YAxis className="text-xs" tick={{ fill: 'currentColor' }} />
+            <BarChart data={chartData} margin={{ top: 20, right: 30, left: 20, bottom: 5 }} barSize={20}>
+              <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="var(--border)" />
+              <XAxis 
+                dataKey="name" 
+                axisLine={false}
+                tickLine={false}
+                tick={{ fill: 'var(--muted-foreground)', fontSize: 12 }}
+                dy={10}
+              />
+              <YAxis 
+                axisLine={false}
+                tickLine={false}
+                tick={{ fill: 'var(--muted-foreground)', fontSize: 12 }}
+              />
               <Tooltip 
-                contentStyle={{ backgroundColor: 'var(--background)', borderColor: 'var(--border)', borderRadius: '8px' }}
+                contentStyle={{ 
+                  backgroundColor: 'var(--card)', 
+                  borderColor: 'var(--border)', 
+                  borderRadius: '8px',
+                  boxShadow: '0 4px 12px rgba(0,0,0,0.1)' 
+                }}
                 cursor={{ fill: 'var(--muted)', opacity: 0.1 }}
               />
-              <Legend />
-              {/* Stacked bars for vehicle types */}
-              <Bar dataKey="Heavy" stackId="a" fill="#3b82f6" />
-              <Bar dataKey="Medium" stackId="a" fill="#8b5cf6" />
-              <Bar dataKey="Light" stackId="a" fill="#10b981" />
+              <Legend 
+                verticalAlign="top" 
+                height={36} 
+                iconType="circle"
+                wrapperStyle={{ fontSize: '12px', fontWeight: 500 }}
+              />
               
-              {/* We add a custom background or reference to show the availability color? 
-                  Actually, let's make the STROKE of the bars correspond to availability or just stick to the stacked view 
-                  and add a separate "Availability" bar?
-                  
-                  Let's try the user's specific request: "colour in a way according to the availability green ,orange ,red"
-                  This contradicts the stacked vehicle type view (which needs colors for types).
-                  
-                  Compromise: The chart shows Vehicle Types. I will ADD a "Status" strip below or modify the tooltip.
-                  
-                  WAIT, I can use a composed chart or just let the vehicle types take precedence for the breakdown.
-                  But the prompt says "graph should be shown in a colour in a way according to the availability".
-                  
-                  Let's try this: 
-                  1. A Bar for Total Occupied (Colored by Availability).
-                  2. Tooltip breaks down types.
-                  
-                  Let's comment out the stacked bars and use the colored total bar for now as it matches the "color according to availability" requirement better visually.
-              */}
-               <Bar dataKey="occupied" name="Total Occupied" radius={[4, 4, 0, 0]}>
-                {chartData.map((entry, index) => (
-                  <Cell key={`cell-${index}`} fill={entry.fillColor} />
-                ))}
-              </Bar>
+              {/* Stacked Bars for Vehicle Composition */}
+              <Bar dataKey="Heavy" stackId="a" fill="#3b82f6" radius={[0, 0, 4, 4]} name="Heavy Vehicles" />
+              <Bar dataKey="Medium" stackId="a" fill="#8b5cf6" name="Medium Vehicles" />
+              <Bar dataKey="Light" stackId="a" fill="#10b981" name="Light Vehicles" />
+              
+              {/* Background bar representing remaining capacity */}
+              <Bar 
+                dataKey={props => props.capacity - props.occupied} 
+                stackId="a" 
+                fill="var(--muted)" 
+                opacity={0.3} 
+                name="Vacant Spots"
+                radius={[4, 4, 0, 0]} 
+              />
             </BarChart>
           </ResponsiveContainer>
         </div>
-        <div className="flex justify-center gap-6 mt-4 text-sm text-muted-foreground">
-          <div className="flex items-center gap-2">
-            <div className="w-3 h-3 rounded-full bg-green-500" />
-            <span>Available</span>
-          </div>
-          <div className="flex items-center gap-2">
-            <div className="w-3 h-3 rounded-full bg-orange-500" />
-            <span>Filling Fast</span>
-          </div>
-          <div className="flex items-center gap-2">
-            <div className="w-3 h-3 rounded-full bg-red-500" />
-            <span>Critical/Full</span>
-          </div>
+        <div className="mt-4 p-4 bg-muted/30 rounded-lg border border-border/50">
+           <div className="flex flex-wrap items-center justify-between gap-4 text-sm">
+              <div className="flex items-center gap-2 text-muted-foreground">
+                <div className="w-2 h-2 rounded-full bg-blue-500"></div>
+                <span>Heavy (Bus/Truck)</span>
+              </div>
+              <div className="flex items-center gap-2 text-muted-foreground">
+                <div className="w-2 h-2 rounded-full bg-violet-500"></div>
+                <span>Medium (Van/Minibus)</span>
+              </div>
+              <div className="flex items-center gap-2 text-muted-foreground">
+                <div className="w-2 h-2 rounded-full bg-emerald-500"></div>
+                <span>Light (Car/Jeep)</span>
+              </div>
+              <div className="flex items-center gap-2 text-muted-foreground">
+                <div className="w-2 h-2 rounded-full bg-muted-foreground/30"></div>
+                <span>Vacant Space</span>
+              </div>
+           </div>
         </div>
       </div>
 
