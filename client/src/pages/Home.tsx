@@ -128,20 +128,11 @@ export default function Home() {
                 wrapperStyle={{ fontSize: '12px', fontWeight: 500 }}
               />
               
-              {/* Stacked Bars for Vehicle Composition */}
-              <Bar dataKey="Heavy" stackId="a" fill="#a855f7" radius={[0, 0, 4, 4]} name="Heavy Vehicles" />
-              <Bar dataKey="Medium" stackId="a" fill="#f97316" name="Medium Vehicles" />
-              <Bar dataKey="Light" stackId="a" fill="#4ade80" name="Light Vehicles" />
+              {/* Grouped Bars for Vehicle Composition - Removed stackId to unstack them */}
+              <Bar dataKey="Heavy" fill="#a855f7" radius={[4, 4, 0, 0]} name="Heavy Vehicles" />
+              <Bar dataKey="Medium" fill="#f97316" radius={[4, 4, 0, 0]} name="Medium Vehicles" />
+              <Bar dataKey="Light" fill="#4ade80" radius={[4, 4, 0, 0]} name="Light Vehicles" />
               
-              {/* Background bar representing remaining capacity */}
-              <Bar 
-                dataKey={props => props.capacity - props.occupied} 
-                stackId="a" 
-                fill="var(--muted)" 
-                opacity={0.3} 
-                name="Vacant Spots"
-                radius={[4, 4, 0, 0]} 
-              />
             </BarChart>
           </ResponsiveContainer>
         </div>

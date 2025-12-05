@@ -26,7 +26,6 @@ function Router() {
       <Route path="/zone/:id" component={AreaDetails} />
       <Route path="/predictions" component={Predictions} />
       <Route path="/ticket" component={Ticket} />
-      <Route path="/profile" component={Profile} />
       <Route path="/qr-code" component={QRCode} />
       <Route component={NotFound} />
     </Switch>

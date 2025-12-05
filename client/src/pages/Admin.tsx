@@ -2,24 +2,32 @@ import { useState, useEffect } from "react";
 import { useParking, ParkingZone } from "@/lib/parking-context";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import {
   Dialog,
   DialogContent,
   DialogHeader,
   DialogTitle,
+  DialogFooter,
 } from "@/components/ui/dialog";
-import { Eye, Bus, Truck, Car, ChevronLeft, ChevronRight, Pause, Play } from "lucide-react";
+import { Eye, Bus, Truck, Car, ChevronLeft, ChevronRight, Pause, Play, Plus, Pencil, Trash2 } from "lucide-react";
 
 export default function Admin() {
-  const { zones, totalCapacity, totalOccupied } = useParking();
+  const { zones, totalCapacity, totalOccupied, addZone, updateZone, deleteZone } = useParking();
   const [selectedZone, setSelectedZone] = useState<ParkingZone | null>(null);
   const [currentTime, setCurrentTime] = useState(new Date());
+  
+  // Edit/Create State
+  const [isEditOpen, setIsEditOpen] = useState(false);
+  const [isCreateOpen, setIsCreateOpen] = useState(false);
+  const [editingZone, setEditingZone] = useState<ParkingZone | null>(null);
+  const [formData, setFormData] = useState({ name: "", capacity: 50 });
   
   // Slideshow state
   const [pageIndex, setPageIndex] = useState(0);
   const [isPaused, setIsPaused] = useState(false);
   const ITEMS_PER_PAGE = 5;
-  const totalPages = Math.ceil(zones.length / ITEMS_PER_PAGE);
+  const totalPages = Math.ceil(zones.length / ITEMS_PER_PAGE) || 1;
 
   useEffect(() => {
     const timer = setInterval(() => setCurrentTime(new Date()), 1000);
@@ -57,6 +65,39 @@ export default function Admin() {
     }
   };
 
+  const handleEditClick = (zone: ParkingZone) => {
+    setEditingZone(zone);
+    setFormData({ name: zone.name, capacity: zone.capacity });
+    setIsEditOpen(true);
+    setIsPaused(true);
+  };
+
+  const handleDeleteClick = (id: string) => {
+    if (confirm("Are you sure you want to delete this zone?")) {
+      deleteZone(id);
+    }
+  };
+
+  const handleSaveEdit = () => {
+    if (editingZone) {
+      updateZone(editingZone.id, formData);
+      setIsEditOpen(false);
+      setEditingZone(null);
+    }
+  };
+
+  const handleCreate = () => {
+    addZone(formData);
+    setIsCreateOpen(false);
+    setFormData({ name: "", capacity: 50 });
+  };
+
+  const openCreateDialog = () => {
+    setFormData({ name: "New Zone", capacity: 50 });
+    setIsCreateOpen(true);
+    setIsPaused(true);
+  };
+
   const currentZones = zones.slice(pageIndex * ITEMS_PER_PAGE, (pageIndex + 1) * ITEMS_PER_PAGE);
 
   return (
@@ -67,9 +108,14 @@ export default function Admin() {
           <h1 className="text-xl font-bold uppercase tracking-wider mb-1">Nilakkal Parking – Live Admin Dashboard</h1>
           <div className="text-xs text-white/60">CONTROL ROOM • {currentTime.toLocaleDateString()} • {currentTime.toLocaleTimeString()}</div>
         </div>
-        <div className="border border-white p-2 min-w-[150px] text-right">
-          <div className="text-[10px] uppercase tracking-widest mb-1 text-white/70">Total Capacity</div>
-          <div className="text-2xl font-bold">{totalCapacity}</div>
+        <div className="flex gap-4 items-center">
+          <Button onClick={openCreateDialog} className="bg-white text-black hover:bg-white/90 rounded-none gap-2">
+            <Plus className="w-4 h-4" /> Add Zone
+          </Button>
+          <div className="border border-white p-2 min-w-[150px] text-right">
+            <div className="text-[10px] uppercase tracking-widest mb-1 text-white/70">Total Capacity</div>
+            <div className="text-2xl font-bold">{totalCapacity}</div>
+          </div>
         </div>
       </div>
 
@@ -82,7 +128,7 @@ export default function Admin() {
           </div>
           <div className="text-right">
              <div className="text-[10px] uppercase tracking-widest mb-1 text-white/70">Occupancy Rate</div>
-             <div className="text-xl font-bold">{Math.round((totalOccupied / totalCapacity) * 100)}%</div>
+             <div className="text-xl font-bold">{totalCapacity > 0 ? Math.round((totalOccupied / totalCapacity) * 100) : 0}%</div>
           </div>
         </div>
         <div className="border border-white p-3">
@@ -124,21 +170,40 @@ export default function Admin() {
                       {isFull ? "FULL" : "FREE"}
                     </span>
                   </td>
-                  <td className="p-3 text-center">
+                  <td className="p-3 text-center flex justify-center gap-2">
                     <Button 
                       variant="ghost" 
                       size="sm" 
                       onClick={() => setSelectedZone(zone)}
                       className="h-8 w-8 p-0 text-white hover:text-black hover:bg-white rounded-none border border-white"
+                      title="View Vehicles"
                     >
                       <Eye className="w-4 h-4" />
+                    </Button>
+                    <Button 
+                      variant="ghost" 
+                      size="sm" 
+                      onClick={() => handleEditClick(zone)}
+                      className="h-8 w-8 p-0 text-white hover:text-black hover:bg-white rounded-none border border-white"
+                      title="Edit Zone"
+                    >
+                      <Pencil className="w-4 h-4" />
+                    </Button>
+                    <Button 
+                      variant="ghost" 
+                      size="sm" 
+                      onClick={() => handleDeleteClick(zone.id)}
+                      className="h-8 w-8 p-0 text-red-400 hover:text-red-900 hover:bg-red-200 rounded-none border border-red-400"
+                      title="Delete Zone"
+                    >
+                      <Trash2 className="w-4 h-4" />
                     </Button>
                   </td>
                 </tr>
               );
             })}
             {/* Fill empty rows to maintain height if last page has fewer items */}
-            {Array.from({ length: ITEMS_PER_PAGE - currentZones.length }).map((_, i) => (
+            {Array.from({ length: Math.max(0, ITEMS_PER_PAGE - currentZones.length) }).map((_, i) => (
                <tr key={`empty-${i}`} className="border-b border-white/10 h-14">
                  <td colSpan={6} className="p-3 text-center text-white/10 uppercase tracking-widest text-xs">--- Empty Slot ---</td>
                </tr>
@@ -233,6 +298,74 @@ export default function Admin() {
                </div>
              )}
           </div>
+        </DialogContent>
+      </Dialog>
+
+      {/* Edit Zone Dialog */}
+      <Dialog open={isEditOpen} onOpenChange={setIsEditOpen}>
+        <DialogContent className="bg-black border border-white text-white">
+          <DialogHeader>
+            <DialogTitle>Edit Zone</DialogTitle>
+          </DialogHeader>
+          <div className="grid gap-4 py-4">
+            <div className="grid grid-cols-4 items-center gap-4">
+              <Label htmlFor="name" className="text-right">Name</Label>
+              <Input 
+                id="name" 
+                value={formData.name} 
+                onChange={(e) => setFormData({...formData, name: e.target.value})}
+                className="col-span-3 bg-black border-white text-white" 
+              />
+            </div>
+            <div className="grid grid-cols-4 items-center gap-4">
+              <Label htmlFor="capacity" className="text-right">Capacity</Label>
+              <Input 
+                id="capacity" 
+                type="number"
+                value={formData.capacity} 
+                onChange={(e) => setFormData({...formData, capacity: parseInt(e.target.value)})}
+                className="col-span-3 bg-black border-white text-white" 
+              />
+            </div>
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setIsEditOpen(false)} className="border-white text-white hover:bg-white hover:text-black">Cancel</Button>
+            <Button onClick={handleSaveEdit} className="bg-white text-black hover:bg-white/90">Save Changes</Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Create Zone Dialog */}
+      <Dialog open={isCreateOpen} onOpenChange={setIsCreateOpen}>
+        <DialogContent className="bg-black border border-white text-white">
+          <DialogHeader>
+            <DialogTitle>Create New Zone</DialogTitle>
+          </DialogHeader>
+          <div className="grid gap-4 py-4">
+            <div className="grid grid-cols-4 items-center gap-4">
+              <Label htmlFor="new-name" className="text-right">Name</Label>
+              <Input 
+                id="new-name" 
+                value={formData.name} 
+                onChange={(e) => setFormData({...formData, name: e.target.value})}
+                className="col-span-3 bg-black border-white text-white" 
+              />
+            </div>
+            <div className="grid grid-cols-4 items-center gap-4">
+              <Label htmlFor="new-capacity" className="text-right">Capacity</Label>
+              <Input 
+                id="new-capacity" 
+                type="number"
+                value={formData.capacity} 
+                onChange={(e) => setFormData({...formData, capacity: parseInt(e.target.value)})}
+                className="col-span-3 bg-black border-white text-white" 
+              />
+            </div>
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setIsCreateOpen(false)} className="border-white text-white hover:bg-white hover:text-black">Cancel</Button>
+            <Button onClick={handleCreate} className="bg-white text-black hover:bg-white/90">Create Zone</Button>
+          </DialogFooter>
         </DialogContent>
       </Dialog>
     </div>

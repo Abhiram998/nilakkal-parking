@@ -31,6 +31,9 @@ type ParkingContextType = {
   isAdmin: boolean;
   loginAdmin: (username?: string, password?: string) => boolean;
   logoutAdmin: () => void;
+  addZone: (zone: Omit<ParkingZone, 'id' | 'occupied' | 'vehicles' | 'stats'>) => void;
+  updateZone: (id: string, data: Partial<Pick<ParkingZone, 'name' | 'capacity'>>) => void;
+  deleteZone: (id: string) => void;
 };
 
 const ParkingContext = createContext<ParkingContextType | undefined>(undefined);
@@ -82,6 +85,26 @@ export function ParkingProvider({ children }: { children: React.ReactNode }) {
   };
   
   const logoutAdmin = () => setIsAdmin(false);
+
+  const addZone = (zoneData: Omit<ParkingZone, 'id' | 'occupied' | 'vehicles' | 'stats'>) => {
+    const newId = `Z${zones.length + 1}`;
+    const newZone: ParkingZone = {
+      id: newId,
+      ...zoneData,
+      occupied: 0,
+      vehicles: [],
+      stats: { heavy: 0, medium: 0, light: 0 }
+    };
+    setZones([...zones, newZone]);
+  };
+
+  const updateZone = (id: string, data: Partial<Pick<ParkingZone, 'name' | 'capacity'>>) => {
+    setZones(zones.map(z => z.id === id ? { ...z, ...data } : z));
+  };
+
+  const deleteZone = (id: string) => {
+    setZones(zones.filter(z => z.id !== id));
+  };
 
   // Simulate live updates
   useEffect(() => {
@@ -178,7 +201,7 @@ export function ParkingProvider({ children }: { children: React.ReactNode }) {
   const totalOccupied = zones.reduce((acc, z) => acc + z.occupied, 0);
 
   return (
-    <ParkingContext.Provider value={{ zones, enterVehicle, totalCapacity, totalOccupied, isAdmin, loginAdmin, logoutAdmin }}>
+    <ParkingContext.Provider value={{ zones, enterVehicle, totalCapacity, totalOccupied, isAdmin, loginAdmin, logoutAdmin, addZone, updateZone, deleteZone }}>
       {children}
     </ParkingContext.Provider>
   );

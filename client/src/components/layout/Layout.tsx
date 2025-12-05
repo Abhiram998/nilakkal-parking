@@ -36,12 +36,6 @@ export default function Layout({ children }: { children: React.ReactNode }) {
         </>
       )}
 
-      <Link href="/profile">
-        <div className={`flex items-center gap-2 px-4 py-2 rounded-md transition-colors cursor-pointer ${location === '/profile' ? 'bg-primary/10 text-primary font-medium' : 'text-muted-foreground hover:text-primary'}`}>
-          <User className="w-4 h-4" />
-          <span>Profile</span>
-        </div>
-      </Link>
 
       {isAdmin && (
         <>
