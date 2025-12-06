@@ -2,7 +2,7 @@ import { useParking, ParkingZone } from "@/lib/parking-context";
 import { ZoneCard } from "@/components/parking/ZoneCard";
 import { MapPin, Search, Ticket, BarChart3 } from "lucide-react";
 import heroImage from '@assets/generated_images/sabarimala_parking_entrance_atmospheric_shot.png';
-import policeLogo from '@assets/Kerala_State_Police_Logo_1764997544066.png';
+import policeLogo from '@assets/IMG-20251206-WA0008_1764997992750.jpg';
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useState } from "react";
@@ -62,7 +62,6 @@ export default function Home() {
         </div>
         
         <div className="relative z-10 p-8 h-full flex flex-col justify-center max-w-2xl text-white">
-          <img src={policeLogo} alt="Kerala Police Logo" className="w-24 h-24 mb-4 object-contain drop-shadow-lg" />
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/20 border border-white/30 text-white text-xs font-medium mb-4 backdrop-blur-sm w-fit">
             <span className="relative flex h-2 w-2">
               <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
@@ -89,6 +88,11 @@ export default function Home() {
               </div>
             </div>
           </div>
+        </div>
+
+        {/* Logo positioned on the right side */}
+        <div className="absolute top-1/2 -translate-y-1/2 right-8 md:right-16 z-10 hidden md:block">
+           <img src={policeLogo} alt="Kerala Police Logo" className="w-32 md:w-48 object-contain drop-shadow-xl bg-white/10 backdrop-blur-sm p-2 rounded-lg border border-white/20" />
         </div>
       </div>
 
