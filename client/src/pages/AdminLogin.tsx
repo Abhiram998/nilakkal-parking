@@ -79,7 +79,7 @@ export default function AdminLogin() {
             </Button>
           </form>
           <div className="mt-6 text-center">
-            <Link href="/login">
+            <Link href="/">
               <span className="text-sm text-slate-500 hover:text-slate-300 cursor-pointer transition-colors">
                 ← Return to Public Portal
               </span>
