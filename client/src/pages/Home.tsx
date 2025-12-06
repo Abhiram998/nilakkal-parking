@@ -104,9 +104,10 @@ export default function Home() {
           <BarChart3 className="w-5 h-5 text-primary" />
           <h2 className="text-xl font-bold">Real-time Zone Vacancy by Vehicle Type</h2>
         </div>
-        <div className="h-[300px] md:h-[400px] w-full">
-          <ResponsiveContainer width="100%" height="100%">
-            <BarChart data={chartData} margin={{ top: 20, right: 30, left: 0, bottom: 5 }} barGap={0} barCategoryGap="20%">
+        <div className="w-full overflow-x-auto pb-4">
+          <div className="h-[300px] md:h-[400px] min-w-[800px] w-full">
+            <ResponsiveContainer width="100%" height="100%">
+              <BarChart data={chartData} margin={{ top: 20, right: 30, left: 0, bottom: 5 }} barGap={0} barCategoryGap="20%">
               <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="var(--border)" />
               <XAxis 
                 dataKey="name" 
@@ -139,6 +140,7 @@ export default function Home() {
             </BarChart>
           </ResponsiveContainer>
         </div>
+      </div>
         <div className="mt-4 p-4 bg-muted/30 rounded-lg border border-border/50">
            <div className="flex flex-wrap items-center justify-between gap-4 text-sm">
               <div className="flex items-center gap-2 text-muted-foreground">
