@@ -58,41 +58,43 @@ export default function Home() {
             alt="Nilakkal Entrance" 
             className="w-full h-full object-cover opacity-90"
           />
-          <div className="absolute inset-0 bg-gradient-to-r from-black/80 via-black/40 to-transparent" />
+          <div className="absolute inset-0 bg-gradient-to-r from-blue-900/90 via-blue-900/60 to-transparent" />
         </div>
         
-        <div className="relative z-10 p-8 h-full flex flex-col justify-center max-w-2xl text-white">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/20 border border-white/30 text-white text-xs font-medium mb-4 backdrop-blur-sm w-fit">
-            <span className="relative flex h-2 w-2">
-              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
-              <span className="relative inline-flex rounded-full h-2 w-2 bg-green-400"></span>
-            </span>
-            Live Status
-          </div>
-          <h1 className="text-3xl md:text-4xl font-bold mb-2 leading-tight tracking-tight">
-            Nilakkal Parking
-          </h1>
-          <p className="text-base text-white/80 mb-6 max-w-lg leading-relaxed">
-            Real-time parking availability for Sabarimala pilgrims.
-          </p>
-          
-          <div className="flex gap-8">
-            <div>
-              <div className="text-xs text-white/60 uppercase tracking-wider font-medium mb-1">Vacant Spots</div>
-              <div className="text-2xl font-bold text-white">{totalCapacity - totalOccupied}</div>
-            </div>
-            <div>
-              <div className="text-xs text-white/60 uppercase tracking-wider font-medium mb-1">Status</div>
-              <div className={`text-2xl font-bold ${availabilityPercentage < 20 ? 'text-red-400' : 'text-green-400'}`}>
-                {availabilityPercentage < 10 ? 'Critical' : availabilityPercentage < 30 ? 'Busy' : 'Available'}
+        <div className="relative z-10 p-8 h-full flex flex-row items-center justify-between w-full">
+          <div className="flex flex-col justify-center text-white max-w-3xl">
+            <h2 className="text-2xl md:text-3xl font-bold mb-1 leading-tight tracking-wide font-malayalam">
+              കേരള പോലീസ്
+            </h2>
+            <h1 className="text-4xl md:text-5xl font-black mb-2 leading-tight tracking-wider uppercase">
+              KERALA POLICE
+            </h1>
+            <p className="text-sm md:text-base text-white/90 font-medium tracking-widest uppercase mb-6">
+              OFFICIAL WEBSITE OF KERALA POLICE
+            </p>
+            
+            <div className="flex gap-8 mt-2">
+              <div>
+                <div className="text-xs text-white/60 uppercase tracking-wider font-medium mb-1">Vacant Spots</div>
+                <div className="text-2xl font-bold text-white">{totalCapacity - totalOccupied}</div>
+              </div>
+              <div>
+                <div className="text-xs text-white/60 uppercase tracking-wider font-medium mb-1">Status</div>
+                <div className={`text-2xl font-bold ${availabilityPercentage < 20 ? 'text-red-400' : 'text-green-400'}`}>
+                  {availabilityPercentage < 10 ? 'Critical' : availabilityPercentage < 30 ? 'Busy' : 'Available'}
+                </div>
               </div>
             </div>
           </div>
-        </div>
 
-        {/* Logo positioned on the right side */}
-        <div className="absolute top-1/2 -translate-y-1/2 right-8 md:right-16 z-10 hidden md:block">
-           <img src={policeLogo} alt="Kerala Police Logo" className="w-32 md:w-48 object-contain drop-shadow-xl bg-white/10 backdrop-blur-sm p-2 rounded-lg border border-white/20" />
+          {/* Logo positioned on the right side */}
+          <div className="hidden md:block h-full py-4 mr-8">
+             <img 
+               src={policeLogo} 
+               alt="Kerala Police Logo" 
+               className="h-full w-auto object-contain drop-shadow-2xl filter brightness-110" 
+             />
+          </div>
         </div>
       </div>
 
