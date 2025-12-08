@@ -179,18 +179,11 @@ export default function Home() {
              
              {/* Using a grid for zones, but maybe more compact than the full page version? 
                  Actually the ZoneCard is already quite good. */}
-             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                {zones.slice(0, 4).map((zone) => (
+             <div className="h-[400px] overflow-y-auto pr-2 grid grid-cols-1 md:grid-cols-2 gap-4">
+                {zones.map((zone) => (
                   <ZoneCard key={zone.id} zone={zone} />
                 ))}
              </div>
-             {zones.length > 4 && (
-                <div className="flex justify-center">
-                    <Link href="/predictions">
-                        <Button variant="outline" className="text-slate-500">View All Zones</Button>
-                    </Link>
-                </div>
-             )}
           </div>
 
         </div>
