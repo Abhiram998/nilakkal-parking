@@ -197,11 +197,11 @@ export default function Home() {
               </div>
             </div>
             
-            <div className="h-[220px] w-full">
+            <div className="h-[180px] w-full">
               <ResponsiveContainer width="100%" height="100%">
                 <BarChart 
                   data={barChartData} 
-                  barSize={24}
+                  barSize={12} // Smaller bars since there are 3 per zone
                   margin={{ top: 20, right: 10, left: 0, bottom: 5 }}
                   onMouseMove={(state: any) => {
                     if (state.activePayload) {
@@ -219,7 +219,7 @@ export default function Home() {
                     tickLine={false} 
                     tick={{fill: '#64748b', fontSize: 13, fontWeight: 500}} 
                     dy={10} 
-                    interval={0} 
+                    interval={0} // Show all zones
                   />
                   <YAxis 
                     axisLine={false} 
@@ -265,31 +265,10 @@ export default function Home() {
                       return null;
                     }}
                   />
-                  
-                  <Bar dataKey="Heavy" fill="#1e293b" radius={[4, 4, 0, 0]} name="Heavy" minPointSize={25}>
-                    <LabelList 
-                        dataKey="Heavy" 
-                        position="center" 
-                        formatter={(value: number) => value > 0 ? `${Math.round(value)}%` : ''}
-                        style={{ fill: 'white', fontSize: 11, fontWeight: 'bold' }} 
-                    />
-                  </Bar>
-                  <Bar dataKey="Medium" fill="#f59e0b" radius={[4, 4, 0, 0]} name="Medium" minPointSize={25}>
-                    <LabelList 
-                        dataKey="Medium" 
-                        position="center" 
-                        formatter={(value: number) => value > 0 ? `${Math.round(value)}%` : ''}
-                        style={{ fill: 'white', fontSize: 11, fontWeight: 'bold' }} 
-                    />
-                  </Bar>
-                  <Bar dataKey="Light" fill="#3b82f6" radius={[4, 4, 0, 0]} name="Light" minPointSize={25}>
-                    <LabelList 
-                        dataKey="Light" 
-                        position="center" 
-                        formatter={(value: number) => value > 0 ? `${Math.round(value)}%` : ''}
-                        style={{ fill: 'white', fontSize: 11, fontWeight: 'bold' }} 
-                    />
-                  </Bar>
+                  {/* Unstacked bars (side by side) */}
+                  <Bar dataKey="Heavy" fill="#1e293b" radius={[4, 4, 0, 0]} name="Heavy" />
+                  <Bar dataKey="Medium" fill="#f59e0b" radius={[4, 4, 0, 0]} name="Medium" />
+                  <Bar dataKey="Light" fill="#3b82f6" radius={[4, 4, 0, 0]} name="Light" />
                 </BarChart>
               </ResponsiveContainer>
             </div>
