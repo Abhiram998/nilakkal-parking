@@ -474,14 +474,14 @@ export default function Home() {
                 Zone
               </Label>
               <Select 
-                value={ticketData.zoneId} 
-                onValueChange={(val) => setTicketData({ ...ticketData, zoneId: val })}
+                value={ticketData.zoneId || "auto"} 
+                onValueChange={(val) => setTicketData({ ...ticketData, zoneId: val === "auto" ? "" : val })}
               >
                 <SelectTrigger className="col-span-3">
                   <SelectValue placeholder="Auto-assign (Any Available)" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="">Auto-assign (Any Available)</SelectItem>
+                  <SelectItem value="auto">Auto-assign (Any Available)</SelectItem>
                   {zones.map((zone) => (
                     <SelectItem key={zone.id} value={zone.id}>
                       {zone.name} ({zone.capacity - zone.occupied} free)
