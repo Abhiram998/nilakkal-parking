@@ -161,6 +161,7 @@ export default function Report() {
                 <table className="w-full text-left text-sm">
                 <thead>
                     <tr className="border-b bg-muted/50">
+                    <th className="p-4 font-medium w-16">Sl No</th>
                     <th className="p-4 font-medium">Zone</th>
                     <th className="p-4 font-medium">Type</th>
                     <th className="p-4 font-medium">Vehicle No</th>
@@ -170,6 +171,7 @@ export default function Report() {
                 <tbody>
                     {filteredVehicles.map((v, i) => (
                     <tr key={`${v.zoneId}-${i}`} className="border-b last:border-0 hover:bg-muted/50 transition-colors">
+                        <td className="p-4 font-mono text-muted-foreground">{i + 1}</td>
                         <td className="p-4 font-medium">{v.zoneName}</td>
                         <td className="p-4">
                         <div className="flex items-center gap-2">
