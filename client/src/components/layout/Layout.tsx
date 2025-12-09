@@ -23,13 +23,6 @@ export default function Layout({ children }: { children: React.ReactNode }) {
           <span>Home</span>
         </div>
       </Link>
-
-      <Link href="/report">
-        <div className={`flex items-center gap-2 px-4 py-2 rounded-md transition-colors cursor-pointer ${location === '/report' ? 'bg-primary/10 text-primary font-medium' : 'text-muted-foreground hover:text-primary'}`}>
-          <FileText className="w-4 h-4" />
-          <span>Report</span>
-        </div>
-      </Link>
       
       {!isAdmin && (
         <Link href="/predictions">
@@ -42,6 +35,12 @@ export default function Layout({ children }: { children: React.ReactNode }) {
 
       {isAdmin && (
         <div className="flex items-center gap-1">
+          <Link href="/report">
+            <div className={`flex items-center gap-2 px-4 py-2 rounded-md transition-colors cursor-pointer ${location === '/report' ? 'bg-primary/10 text-primary font-medium' : 'text-muted-foreground hover:text-primary'}`}>
+              <FileText className="w-4 h-4" />
+              <span>Report</span>
+            </div>
+          </Link>
           <Link href="/admin">
             <div className={`flex items-center gap-2 px-4 py-2 rounded-md transition-colors cursor-pointer ${location === '/admin' ? 'bg-primary/10 text-primary font-medium' : 'text-muted-foreground hover:text-primary'}`}>
               <LayoutDashboard className="w-4 h-4" />
