@@ -1,5 +1,5 @@
 import { Link, useLocation } from "wouter";
-import { Car, ShieldCheck, Home, Menu, User, BarChart3, LayoutDashboard, QrCode } from "lucide-react";
+import { Car, ShieldCheck, Home, Menu, User, BarChart3, LayoutDashboard, QrCode, FileText } from "lucide-react";
 import { useState } from "react";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { Button } from "@/components/ui/button";
@@ -21,6 +21,13 @@ export default function Layout({ children }: { children: React.ReactNode }) {
         <div className={`flex items-center gap-2 px-4 py-2 rounded-md transition-colors cursor-pointer ${location === '/' ? 'bg-primary/10 text-primary font-medium' : 'text-muted-foreground hover:text-primary'}`}>
           <Home className="w-4 h-4" />
           <span>Home</span>
+        </div>
+      </Link>
+
+      <Link href="/report">
+        <div className={`flex items-center gap-2 px-4 py-2 rounded-md transition-colors cursor-pointer ${location === '/report' ? 'bg-primary/10 text-primary font-medium' : 'text-muted-foreground hover:text-primary'}`}>
+          <FileText className="w-4 h-4" />
+          <span>Report</span>
         </div>
       </Link>
       

@@ -21,7 +21,6 @@ export default function Admin() {
   // Edit/Create State
   const [isEditOpen, setIsEditOpen] = useState(false);
   const [isCreateOpen, setIsCreateOpen] = useState(false);
-  const [isReportOpen, setIsReportOpen] = useState(false);
   const [editingZone, setEditingZone] = useState<ParkingZone | null>(null);
   const [formData, setFormData] = useState({ 
     name: "", 
@@ -137,11 +136,8 @@ export default function Admin() {
           <div className="text-xs text-white/60">CONTROL ROOM • {currentTime.toLocaleDateString()} • {currentTime.toLocaleTimeString()}</div>
         </div>
         <div className="flex gap-4 items-center">
-          <Button onClick={() => setIsReportOpen(true)} className="bg-blue-600 text-white hover:bg-blue-700 rounded-none gap-2 border border-blue-500">
-            <FileText className="w-4 h-4" /> Get Report
-          </Button>
           <Button onClick={openCreateDialog} className="bg-white text-black hover:bg-white/90 rounded-none gap-2">
-            <Plus className="w-4 h-4" /> Add Zone
+            <Plus className="w-4 h-4" /> Add Parking
           </Button>
           <div className="border border-white p-2 min-w-[150px] text-right">
             <div className="text-[10px] uppercase tracking-widest mb-1 text-white/70">Total Capacity</div>
@@ -398,7 +394,7 @@ export default function Admin() {
       <Dialog open={isCreateOpen} onOpenChange={setIsCreateOpen}>
         <DialogContent className="bg-black border border-white text-white">
           <DialogHeader>
-            <DialogTitle>Create New Zone</DialogTitle>
+            <DialogTitle>Create New Parking Zone</DialogTitle>
           </DialogHeader>
           <div className="grid gap-4 py-4">
             <div className="grid grid-cols-4 items-center gap-4">
@@ -461,64 +457,8 @@ export default function Admin() {
           </div>
           <DialogFooter>
             <Button variant="outline" onClick={() => setIsCreateOpen(false)} className="border-white text-white hover:bg-white hover:text-black">Cancel</Button>
-            <Button onClick={handleCreate} className="bg-white text-black hover:bg-white/90">Create Zone</Button>
+            <Button onClick={handleCreate} className="bg-white text-black hover:bg-white/90">Create Parking</Button>
           </DialogFooter>
-        </DialogContent>
-      </Dialog>
-
-      {/* Report Dialog */}
-      <Dialog open={isReportOpen} onOpenChange={setIsReportOpen}>
-        <DialogContent className="bg-black border border-white text-white max-w-4xl max-h-[80vh] overflow-y-auto">
-          <DialogHeader>
-            <DialogTitle className="text-xl uppercase tracking-wider font-bold border-b border-white pb-4 flex justify-between items-center">
-              <span>All Zones - Vehicle Entry Report</span>
-              <Button variant="outline" size="sm" className="gap-2 text-black bg-white hover:bg-white/90 border-none">
-                <Download className="w-4 h-4" /> Export CSV
-              </Button>
-            </DialogTitle>
-          </DialogHeader>
-          
-          <div className="mt-4">
-             {zones.every(z => z.vehicles.length === 0) ? (
-                <div className="text-center py-8 text-white/50 uppercase tracking-widest border border-white/20">
-                  No vehicles recorded in any zone
-                </div>
-             ) : (
-               <div className="border border-white">
-                 <table className="w-full text-left">
-                   <thead>
-                     <tr className="border-b border-white bg-white/10">
-                       <th className="p-3 uppercase text-xs tracking-wider">Zone</th>
-                       <th className="p-3 uppercase text-xs tracking-wider">Type</th>
-                       <th className="p-3 uppercase text-xs tracking-wider">Vehicle No</th>
-                       <th className="p-3 uppercase text-xs tracking-wider text-right">Entry Time</th>
-                     </tr>
-                   </thead>
-                   <tbody>
-                     {zones.flatMap(zone => 
-                        zone.vehicles.map(v => ({ ...v, zoneName: zone.name, zoneId: zone.id }))
-                      )
-                      .sort((a, b) => b.entryTime.getTime() - a.entryTime.getTime())
-                      .map((v, i) => (
-                       <tr key={`${v.zoneId}-${i}`} className="border-b border-white/20 hover:bg-white/5">
-                         <td className="p-3 font-mono text-sm">{v.zoneName}</td>
-                         <td className="p-3">
-                           <div className="flex items-center gap-2">
-                              {getVehicleIcon(v.type)}
-                              <span className="uppercase text-xs">{v.type}</span>
-                           </div>
-                         </td>
-                         <td className="p-3 font-mono font-bold">{v.number}</td>
-                         <td className="p-3 font-mono text-sm text-right">
-                            {v.entryTime.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}
-                         </td>
-                       </tr>
-                     ))}
-                   </tbody>
-                 </table>
-               </div>
-             )}
-          </div>
         </DialogContent>
       </Dialog>
     </div>
