@@ -1,4 +1,5 @@
-import React, { createContext, useContext, useState, useEffect } from 'react';
+import React, { createContext, useContext, useState, useEffect, useRef } from 'react';
+import { appendEvent, saveLatestSnapshot, loadLatestSnapshotPayload, rebuildStateFromEvents, VehicleRecord } from '@/utils/persistence';
 
 export type VehicleType = 'heavy' | 'medium' | 'light';
 
@@ -88,10 +89,84 @@ const INITIAL_ZONES: ParkingZone[] = Array.from({ length: ZONES_COUNT }, (_, i) 
 
 export function ParkingProvider({ children }: { children: React.ReactNode }) {
   const [zones, setZones] = useState<ParkingZone[]>(INITIAL_ZONES);
+  const zonesRef = useRef(zones); // Ref to access latest zones in intervals/handlers
+
+  useEffect(() => {
+    zonesRef.current = zones;
+  }, [zones]);
+
   const [isAdmin, setIsAdmin] = useState(false);
   const [admins, setAdmins] = useState([
     { username: "police@gmail.com", password: "575", name: "Sabarimala Traffic Control", policeId: "POL-KERALA-575" }
   ]);
+
+  // Persistence: Auto-restore on mount
+  useEffect(() => {
+    const initPersistence = async () => {
+      try {
+        const snapshot = await loadLatestSnapshotPayload();
+        
+        if (snapshot && Array.isArray(snapshot.data)) {
+          // Validate structure
+          const isValid = snapshot.data.every(item => item.plate && item.zone && item.timeIn);
+          if (isValid) {
+            console.log("Persistence: Auto-restoring latest snapshot", snapshot.meta);
+            // Save pre-restore backup for safety
+            await saveLatestSnapshot(makeSnapshotFromState(zonesRef.current));
+            restoreData(snapshot.data);
+            return;
+          }
+        }
+
+        // Fallback to event log rebuild if no valid snapshot
+        console.log("Persistence: Rebuilding from event log...");
+        const rebuiltData = await rebuildStateFromEvents();
+        if (rebuiltData.length > 0) {
+           restoreData(rebuiltData);
+        }
+      } catch (err) {
+        console.error("Persistence error:", err);
+      }
+    };
+    initPersistence();
+  }, []);
+
+  // Persistence: Periodic snapshots (every 3 mins)
+  useEffect(() => {
+    const interval = setInterval(() => {
+       const payload = makeSnapshotFromState(zonesRef.current);
+       saveLatestSnapshot(payload).catch(e => console.error("Auto-save failed", e));
+    }, 3 * 60 * 1000); // 3 minutes
+
+    return () => clearInterval(interval);
+  }, []);
+
+  // Persistence: Save on unload
+  useEffect(() => {
+    const handleUnload = () => {
+       // Best effort synchronous save attempt (though async in logic, we fire and forget)
+       // Navigator.sendBeacon is better for this but for indexedDB we just start the promise
+       const payload = makeSnapshotFromState(zonesRef.current);
+       saveLatestSnapshot(payload);
+    };
+    window.addEventListener('beforeunload', handleUnload);
+    return () => window.removeEventListener('beforeunload', handleUnload);
+  }, []);
+
+  const makeSnapshotFromState = (currentZones: ParkingZone[]) => {
+    const records: VehicleRecord[] = currentZones.flatMap(z => 
+      z.vehicles.map(v => ({
+        plate: v.number,
+        zone: z.name,
+        timeIn: v.entryTime.toISOString(),
+        timeOut: null
+      }))
+    );
+    return {
+      meta: { app: "nilakkal-police", version: 1, createdAt: new Date().toISOString(), recordCount: records.length },
+      data: records
+    };
+  };
 
   const loginAdmin = (username?: string, password?: string) => {
     const admin = admins.find(a => a.username === username && a.password === password);
@@ -220,6 +295,14 @@ export function ParkingProvider({ children }: { children: React.ReactNode }) {
     };
 
     setZones(updatedZones);
+
+    // Persistence: Append event
+    appendEvent({
+      plate: vehicleNumber,
+      zone: zone.name,
+      timeIn: new Date().toISOString(),
+      timeOut: null
+    }).catch(e => console.error("Failed to persist event", e));
 
     return { 
       success: true, 
