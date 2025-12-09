@@ -151,23 +151,23 @@ export default function Home() {
   };
 
   const TopCard = ({ title, value, subValue, dark = false, isVacancy = false }: any) => (
-    <div className={`rounded-xl p-4 shadow-sm border relative overflow-hidden group hover:shadow-md transition-all ${dark ? 'bg-[#1a233a] text-white border-none' : 'bg-white border-slate-100 text-slate-800'}`}>
-      <div className="flex justify-between items-start mb-2">
-        <span className={`text-xs font-bold uppercase tracking-wider ${dark ? 'text-slate-300' : 'text-slate-500'}`}>{title}</span>
+    <div className={`rounded-xl p-3 shadow-sm border relative overflow-hidden group hover:shadow-md transition-all ${dark ? 'bg-[#1a233a] text-white border-none' : 'bg-white border-slate-100 text-slate-800'}`}>
+      <div className="flex justify-between items-center mb-0">
+        <span className={`text-[10px] font-bold uppercase tracking-wider ${dark ? 'text-slate-300' : 'text-slate-500'}`}>{title}</span>
+        <div className={`text-xl font-bold ${isVacancy ? 'text-green-500' : ''}`}>
+          {value}
+        </div>
       </div>
-      <div className={`text-2xl font-bold mb-1 ${isVacancy ? 'text-green-500' : ''}`}>
-        {value}
-      </div>
-      {subValue && <div className={`text-xs ${dark ? 'text-slate-400' : 'text-slate-400'}`}>{subValue}</div>}
+      {subValue && <div className={`text-[10px] ${dark ? 'text-slate-400' : 'text-slate-400'}`}>{subValue}</div>}
     </div>
   );
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4">
       {/* Header */}
-      <div className="flex items-center justify-between mb-2">
+      <div className="flex items-center justify-between mb-1">
         <div>
-          <h1 className="text-2xl font-bold text-slate-800">Dashboard Parking</h1>
+          <h1 className="text-xl font-bold text-slate-800">Dashboard Parking</h1>
         </div>
         <div className="flex items-center gap-4">
            {/* Mobile Menu Trigger is handled in Layout */}
@@ -178,7 +178,7 @@ export default function Home() {
       </div>
 
       {/* Top Cards Row */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
         {/* Card 1: Vacancy */}
         <TopCard 
           title="Vacancy" 
@@ -198,22 +198,22 @@ export default function Home() {
         />
         
         {/* Card 4: Composition (Moved from right column) */}
-        <div className="rounded-xl p-4 shadow-sm border bg-white border-slate-100 flex flex-col justify-between h-full">
-           <div className="flex justify-between items-start mb-2">
-             <span className="font-medium text-slate-500">Composition</span>
-             <span className="text-xs font-bold text-slate-700 bg-slate-100 px-2 py-1 rounded-full">
+        <div className="rounded-xl p-3 shadow-sm border bg-white border-slate-100 flex flex-col justify-between h-full">
+           <div className="flex justify-between items-start">
+             <span className="font-medium text-slate-500 text-sm">Composition</span>
+             <span className="text-[10px] font-bold text-slate-700 bg-slate-100 px-2 py-0.5 rounded-full">
                {hoveredZone ? `Z${hoveredZone.name.replace('Nilakkal Zone ', '')}` : "Total"}
              </span>
            </div>
            
-           <div className="flex items-center gap-4">
-              <div className="w-[80px] h-[80px] relative flex-shrink-0">
+           <div className="flex items-center gap-2">
+              <div className="w-[50px] h-[50px] relative flex-shrink-0">
                 <ResponsiveContainer width="100%" height="100%">
                   <PieChart>
                     <Pie
                       data={pieData}
-                      innerRadius={25}
-                      outerRadius={35}
+                      innerRadius={15}
+                      outerRadius={25}
                       paddingAngle={0}
                       dataKey="value"
                       stroke="none"
@@ -225,15 +225,15 @@ export default function Home() {
                   </PieChart>
                 </ResponsiveContainer>
                 <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-                   <span className="text-xs font-bold text-slate-700">{activeOccupancyRate}%</span>
+                   <span className="text-[10px] font-bold text-slate-700">{activeOccupancyRate}%</span>
                 </div>
               </div>
               
-              <div className="flex-1 space-y-1">
+              <div className="flex-1 space-y-0.5">
                  {pieData.map((item, index) => (
-                    <div key={index} className="flex items-center justify-between text-xs">
-                       <div className="flex items-center gap-1.5">
-                          <div className="w-1.5 h-1.5 rounded-full" style={{ backgroundColor: item.color }} />
+                    <div key={index} className="flex items-center justify-between text-[10px]">
+                       <div className="flex items-center gap-1">
+                          <div className="w-1 h-1 rounded-full" style={{ backgroundColor: item.color }} />
                           <span className="text-slate-500">{item.name}</span>
                        </div>
                        <span className="font-bold text-slate-700">{item.value}</span>
@@ -245,7 +245,7 @@ export default function Home() {
       </div>
 
       {/* Main Grid */}
-      <div className="grid grid-cols-1 gap-6 h-full">
+      <div className="grid grid-cols-1 gap-6 h-full mt-2">
         {/* Full Width Column */}
         <div className="space-y-6">
           
