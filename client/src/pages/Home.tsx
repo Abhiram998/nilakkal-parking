@@ -26,6 +26,8 @@ import {
   PieChart, Pie, Cell, LabelList
 } from 'recharts';
 
+import logo from "@/assets/kerala-police-logo.jpg";
+
 export default function Home() {
   const { zones, totalCapacity, totalOccupied, isAdmin, enterVehicle } = useParking();
   const { toast } = useToast();
@@ -170,6 +172,9 @@ export default function Home() {
           <h1 className="text-xl font-bold text-slate-800">Dashboard Parking</h1>
         </div>
         <div className="flex items-center gap-4">
+           {/* Logo - Added here */}
+           <img src={logo} alt="Kerala Police Logo" className="h-10 w-auto object-contain" />
+
            {/* Mobile Menu Trigger is handled in Layout */}
            <Button variant="ghost" size="icon" className="md:hidden">
              <MoreHorizontal />
