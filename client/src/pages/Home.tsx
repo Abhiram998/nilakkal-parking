@@ -1,6 +1,6 @@
 import { useParking, VehicleType } from "@/lib/parking-context";
 import { ZoneCard } from "@/components/parking/ZoneCard";
-import { MapPin, Search, MoreHorizontal, Activity, Ticket } from "lucide-react";
+import { MapPin, Search, MoreHorizontal, Activity, Ticket, User, Bus, Truck, Car } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useState } from "react";
@@ -131,25 +131,32 @@ export default function Home() {
   ];
 
   // Search state
+  const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
-  const [searchResult, setSearchResult] = useState<any>(null);
-  const [hasSearched, setHasSearched] = useState(false);
+  const [searchResult, setSearchResult] = useState<{ vehicle: any; zoneName: string } | null>(null);
 
-  const handleSearch = (e: React.FormEvent) => {
-    e.preventDefault();
-    setHasSearched(true);
-    if (!searchQuery.trim()) {
+  const handleSearch = (query: string) => {
+    setSearchQuery(query);
+    if (!query.trim()) {
       setSearchResult(null);
       return;
     }
     for (const zone of zones) {
-      const vehicle = zone.vehicles.find(v => v.number.toLowerCase().includes(searchQuery.toLowerCase()));
+      const vehicle = zone.vehicles.find(v => v.number.toLowerCase().includes(query.toLowerCase()));
       if (vehicle) {
-        setSearchResult({ zone, vehicle });
+        setSearchResult({ vehicle, zoneName: zone.name });
         return;
       }
     }
     setSearchResult(null);
+  };
+
+  const getVehicleIcon = (type: string) => {
+    switch(type) {
+      case 'heavy': return <Bus className="w-4 h-4" />;
+      case 'medium': return <Truck className="w-4 h-4" />;
+      default: return <Car className="w-4 h-4" />;
+    }
   };
 
   const TopCard = ({ title, value, subValue, dark = false, isVacancy = false }: any) => (
@@ -402,34 +409,16 @@ export default function Home() {
 
                 {/* Admin Search Widget (Integrated into Header) */}
                 {isAdmin && (
-                   <div className="flex items-center gap-3">
-                      {searchResult && (
-                          <div className="px-3 py-1.5 bg-green-50 text-green-700 rounded-md text-xs border border-green-100 flex items-center gap-2 animate-in fade-in slide-in-from-right-5">
-                              <span className="font-bold">{searchResult.vehicle.number}</span>
-                              <span>in {searchResult.zone.name}</span>
-                              <Button 
-                                variant="ghost" 
-                                size="icon" 
-                                className="h-4 w-4 ml-1 hover:bg-green-100 rounded-full"
-                                onClick={() => setSearchResult(null)}
-                              >
-                                <span className="sr-only">Dismiss</span>
-                                ×
-                              </Button>
-                          </div>
-                      )}
-                      <form onSubmit={handleSearch} className="flex gap-2">
-                          <Input 
-                              placeholder="Find Vehicle..." 
-                              value={searchQuery}
-                              onChange={(e) => setSearchQuery(e.target.value)}
-                              className="bg-white w-[180px] h-9 text-sm"
-                          />
-                          <Button type="submit" size="sm" className="bg-slate-900 text-white h-9 px-3">
-                            <Search className="w-3.5 h-3.5" />
-                          </Button>
-                      </form>
-                   </div>
+                   <Button 
+                     onClick={() => {
+                       setSearchQuery("");
+                       setSearchResult(null);
+                       setIsSearchOpen(true);
+                     }} 
+                     className="bg-slate-900 text-white gap-2"
+                   >
+                     <Search className="w-4 h-4" /> Find Vehicle
+                   </Button>
                 )}
              </div>
              
@@ -443,6 +432,91 @@ export default function Home() {
 
         </div>
       </div>
+
+      <Dialog open={isSearchOpen} onOpenChange={setIsSearchOpen}>
+        <DialogContent className="bg-white border-slate-200 text-slate-800">
+          <DialogHeader>
+            <DialogTitle>Find Vehicle</DialogTitle>
+          </DialogHeader>
+          <div className="grid gap-4 py-4">
+            <div className="grid gap-2">
+              <Label htmlFor="vehicle-search">Vehicle Number</Label>
+              <div className="flex gap-2">
+                <Input
+                  id="vehicle-search"
+                  placeholder="Enter vehicle number..."
+                  value={searchQuery}
+                  onChange={(e) => handleSearch(e.target.value)}
+                  className="bg-white border-slate-200 text-slate-900"
+                  autoFocus
+                />
+              </div>
+            </div>
+
+            {searchQuery && (
+              <div className="mt-4 border border-slate-100 bg-slate-50 p-4 min-h-[150px] flex items-center justify-center rounded-md">
+                {searchResult ? (
+                  <div className="w-full space-y-4">
+                    <div className="flex items-center justify-between border-b border-slate-200 pb-2">
+                      <span className="text-slate-500 uppercase text-xs tracking-wider">Status</span>
+                      <span className="text-green-600 font-bold uppercase tracking-widest flex items-center gap-2">
+                        <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
+                        Parked
+                      </span>
+                    </div>
+                    
+                    <div className="grid grid-cols-2 gap-4">
+                      <div>
+                        <div className="text-[10px] uppercase text-slate-500 mb-1">Vehicle Number</div>
+                        <div className="font-mono text-xl font-bold text-slate-900">{searchResult.vehicle.number}</div>
+                      </div>
+                      <div className="text-right">
+                        <div className="text-[10px] uppercase text-slate-500 mb-1">Type</div>
+                        <div className="font-bold flex items-center justify-end gap-2 uppercase text-slate-900">
+                          {getVehicleIcon(searchResult.vehicle.type)}
+                          {searchResult.vehicle.type}
+                        </div>
+                      </div>
+                      
+                      <div>
+                        <div className="text-[10px] uppercase text-slate-500 mb-1">Parking Zone</div>
+                        <div className="font-bold text-lg text-slate-900">{searchResult.zoneName}</div>
+                      </div>
+                      
+                      <div className="text-right">
+                         <div className="text-[10px] uppercase text-slate-500 mb-1">Slot Number</div>
+                         <div className="font-mono text-lg text-slate-900">{searchResult.vehicle.slot || "N/A"}</div>
+                      </div>
+
+                      <div className="col-span-2 bg-white p-3 mt-2 border border-slate-200 rounded">
+                        <div className="flex justify-between items-center">
+                          <div>
+                            <div className="text-[10px] uppercase text-slate-500 mb-1">Time In</div>
+                            <div className="font-mono text-slate-900">
+                              {new Date(searchResult.vehicle.entryTime).toLocaleTimeString()}
+                            </div>
+                            <div className="text-xs text-slate-500">
+                              {new Date(searchResult.vehicle.entryTime).toLocaleDateString()}
+                            </div>
+                          </div>
+                          <div className="text-right">
+                            <div className="text-[10px] uppercase text-slate-500 mb-1">Duration</div>
+                            <div className="font-mono text-yellow-600 font-bold">
+                              {Math.floor((new Date().getTime() - new Date(searchResult.vehicle.entryTime).getTime()) / (1000 * 60))} mins
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                ) : (
+                   <div className="text-slate-400 italic">No vehicle found with number "{searchQuery}"</div>
+                )}
+              </div>
+            )}
+          </div>
+        </DialogContent>
+      </Dialog>
 
       <Dialog open={isTicketOpen} onOpenChange={setIsTicketOpen} modal={false}>
         <DialogContent 
