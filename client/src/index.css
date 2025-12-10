@@ -115,3 +115,21 @@
     @apply font-sans antialiased bg-background text-foreground;
   }
 }
+
+
+/* horizontal scroll helper for mobile charts */
+.horizontal-scroll {
+  -webkit-overflow-scrolling: touch;
+  scroll-behavior: smooth;
+}
+.horizontal-scroll::-webkit-scrollbar {
+  height: 8px;
+}
+.horizontal-scroll::-webkit-scrollbar-thumb {
+  background-color: rgba(0,0,0,0.12);
+  border-radius: 999px;
+}
+.horizontal-scroll {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(0,0,0,0.12) transparent;
+}
